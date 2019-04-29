@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.ModuleDao">
+  <!--<resultMap id="BaseResultMap" type="com.honghe.entrance.entity.Module">
+    <id column="live_config_id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="app_id" jdbcType="VARCHAR" property="appid" />
+    <result column="bizid" jdbcType="VARCHAR" property="bizid" />
+    <result column="secret_id" jdbcType="VARCHAR" property="secretId" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="push_secret_key" jdbcType="VARCHAR" property="pushSecretKey" />
+    <result column="api_authentication_key" jdbcType="VARCHAR" property="apiAuthenticationKey" />
+  </resultMap>-->
+  <sql id="Base_Column_List">
+
+  </sql>
+  <update id="updateUserModule" parameterType="java.lang.String">
+     update user_sys_module set user_sys_module_path=#{path} WHERE user_sys_module_id=2
+  </update>
+    <update id="updateResLiveModule" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=7
+    </update>
+    <update id="updateResCourse" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=8
+    </update>
+    <update id="updateResFamousTeacher" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=9
+    </update>
+    <update id="updateResTeaching" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=10
+    </update>
+    <update id="updateResVideo" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=11
+    </update>
+    <update id="updateResPersonal" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+        </set>
+        WHERE user_sys_module_id=12
+    </update>
+    <update id="updateYunWei" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=5
+    </update>
+    <update id="updateDeviceControl" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=6
+    </update>
+    <update id="updatePatrol" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.path!=null and params.path!=''">
+                user_sys_module_path=#{params.path},
+            </if>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=4
+    </update>
+    <update id="updateCloudRes" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.color!=null and params.color!=''">
+                user_sys_module_color=#{params.color},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+        </set>
+        WHERE user_sys_module_id=13
+    </update>
+    <select id="getNewAddModule" resultType="java.util.Map">
+        select user_sys_module_id as moduleId,user_sys_module_name as moduleName,user_sys_module_path as path,
+        user_sys_module_color as color,user_sys_module_icon as icon from user_sys_module
+        where user_sys_module_id>13
+    </select>
+    <update id="updateNewModule">
+        update user_sys_module
+        <set>
+            <if test="color!=null and color!=''">
+                user_sys_module_color=#{color},
+            </if>
+            <if test="icon!=null and icon!=''">
+                user_sys_module_icon=#{icon},
+            </if>
+        </set>
+        where user_sys_module_id=#{moduleId}
+    </update>
+</mapper>

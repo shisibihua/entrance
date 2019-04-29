@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.ConfigDao">
+  <sql id="Base_Column_List">
+      config_id as configId,source
+  </sql>
+
+  <select id="getEntranceConfig" resultType="java.util.Map">
+      select <include refid="Base_Column_List"/> from entrance_config where config_id=1
+  </select>
+</mapper>

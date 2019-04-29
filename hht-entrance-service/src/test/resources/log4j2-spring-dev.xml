@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+        <!--开发环境文件-->
+        <Loggers>
+                <logger name="org.springframework" level="ERROR"/>
+
+                <!--additivity 是否在父级中打印-->
+                <logger name="com.honghe" level="DEBUG" additivity="false">
+                        <AppenderRef ref="EntranceInfo" />
+                        <AppenderRef ref="EntranceDebug" />
+                        <AppenderRef ref="EntranceError" />
+                        <AppenderRef ref="Console" />
+                </logger>
+                <logger name="com.honghe.entrance.dao" level="DEBUG" additivity="false">
+                        <AppenderRef ref="sql" />
+                        <AppenderRef ref="Console" />
+                </logger>
+
+
+                <Root level="ERROR">
+                        <AppenderRef ref="Console" />
+                </Root>
+        </Loggers>
+
+        <Appenders>
+                <Console name="Console" target="SYSTEM_OUT" follow="true">
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                </Console>
+
+                <RollingFile name="EntranceDebug" fileName="Entrance-log/EntranceDebug.log" filePattern="Entrance-log/EntranceDebug-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL"/>
+                                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>                           </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <SizeBasedTriggeringPolicy size="100 MB" />
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10000"/>
+                </RollingFile>
+
+                <RollingFile name="EntranceError" fileName="Entrance-log/EntranceError.log" filePattern="Entrance-log/EntranceError-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>                             </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <SizeBasedTriggeringPolicy size="100 MB" />
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10000"/>
+                </RollingFile>
+
+
+                <RollingFile name="EntranceInfo" fileName="Entrance-log/EntranceInfo.log" filePattern="Entrance-log/EntranceInfo-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>                        </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <SizeBasedTriggeringPolicy size="100 MB" />
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10000"/>
+                </RollingFile>
+
+
+
+                <RollingFile name="sql" fileName="sql-log/Entrance-sql.log" filePattern="sql-log/Entrance-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="DEBUG"/>
+                        </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <!-- 启动创建新的日志文件 <OnStartupTriggeringPolicy />-->
+                                <SizeBasedTriggeringPolicy size="100 MB" />
+                                <!-- 记录日志的时间间隔<TimeBasedTriggeringPolicy />-->
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10000"/>
+                </RollingFile>
+        </Appenders>
+</Configuration>

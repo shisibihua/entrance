@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.UserDao">
+  <sql id="Base_Column_List">
+      u.user_id as userId,u.user_code as userCode,u.user_name as userName,u.user_salt as userSalt,u.user_type as userType,
+      u.user_realname as userRealName,u.user_gender as userGender,u.user_mobile as userMobile,u.user_status as userStatus,
+      u.user_login_count as loginCount,u.user_num as userNum,u.user_source as userSource,u.user_remark as remark,
+      r.role_id as roleId
+  </sql>
+    <sql id="Base_Column_List2">
+        u.user_id AS userId,IF(u.user_type = '17','普通用户',IF (u.user_type = '3','管理员','未知')) AS typeName,
+        u.user_realname AS userRealName,u.user_name AS userName,u.user_status AS userStatus,u.user_type AS userType,
+        u.user_mobile AS userMobile,u.user_source AS userSource,IF(u.user_source = 0,'已激活',
+        IF (u.user_source = 1,'未激活','未知')) AS userSourceName,u.user_remark AS userRemark,r.role_id as roleId,
+        u.user_gender as userGender,u.user_login_count as loginCount,u.user_code as userCode
+    </sql>
+  <select id="isExits" parameterType="java.util.Map" resultType="java.lang.Integer">
+      select count(user_id) from user
+      <where>
+          <choose>
+              <when test="userInfo.userName!=null and userInfo.userName!=''">
+                  and user_name=#{userInfo.userName}
+              </when>
+              <when test="userInfo.userRealName!=null and userInfo.userRealName!=''">
+                  and user_realname=#{userInfo.userRealName}
+              </when>
+              <when test="userInfo.userMobile!=null and userInfo.userMobile!=''">
+                  and user_mobile=#{userInfo.userMobile}
+              </when>
+          </choose>
+          and user_status<![CDATA[<>]]>4
+      </where>
+  </select>
+   <insert id="add" parameterType="com.honghe.entrance.entity.User" useGeneratedKeys="true" keyProperty="userInfo.userId">
+       insert into user
+       <trim prefix="(" suffixOverrides="," suffix=")">
+           <if test="userInfo.userSource!=null and userInfo.userSource!=''">
+               user_source,
+           </if>
+           <if test="userInfo.orgCode!=null and userInfo.orgCode!=''">
+               org_code,
+           </if>
+           <if test="userInfo.userName!=null and userInfo.userName!=''">
+               user_name,
+           </if>
+           <if test="userInfo.userRealName!=null and userInfo.userRealName!=''">
+               user_realname,
+           </if>
+           <if test="userInfo.userPwd!=null and userInfo.userPwd!=''">
+               user_pwd,
+           </if>
+           <if test="userInfo.userType!=null and userInfo.userType!=''">
+               user_type,
+           </if>
+           <if test="userInfo.userStatus!=null and userInfo.userStatus!=''">
+               user_status,
+           </if>
+           <if test="userInfo.userSalt!=null and userInfo.userSalt!=''">
+               user_salt,
+           </if>
+           <if test="userInfo.userGender!=null and userInfo.userGender!=''">
+               user_gender,
+           </if>
+           <if test="userInfo.userMobile!=null and userInfo.userMobile!=''">
+               user_mobile,
+           </if>
+           <if test="userInfo.userCode!=null and userInfo.userCode!=''">
+               user_code,
+           </if>
+           <if test="userInfo.remark!=null and userInfo.remark!=''">
+               user_remark,
+           </if>
+           <if test="userInfo.userUuid!=null and userInfo.userUuid!=''">
+               user_uuid,
+           </if>
+       </trim>
+       <trim prefix="values(" suffixOverrides="," suffix=")">
+           <if test="userInfo.userSource!=null and userInfo.userSource!=''">
+               #{userInfo.userSource},
+           </if>
+           <if test="userInfo.orgCode!=null and userInfo.orgCode!=''">
+               #{userInfo.orgCode},
+           </if>
+           <if test="userInfo.userName!=null and userInfo.userName!=''">
+               #{userInfo.userName},
+           </if>
+           <if test="userInfo.userRealName!=null and userInfo.userRealName!=''">
+               #{userInfo.userRealName},
+           </if>
+           <if test="userInfo.userPwd!=null and userInfo.userPwd!=''">
+               #{userInfo.userPwd},
+           </if>
+           <if test="userInfo.userType!=null and userInfo.userType!=''">
+               #{userInfo.userType},
+           </if>
+           <if test="userInfo.userStatus!=null and userInfo.userStatus!=''">
+               #{userInfo.userStatus},
+           </if>
+           <if test="userInfo.userSalt!=null and userInfo.userSalt!=''">
+               #{userInfo.userSalt},
+           </if>
+           <if test="userInfo.userGender!=null and userInfo.userGender!=''">
+               #{userInfo.userGender},
+           </if>
+           <if test="userInfo.userMobile!=null and userInfo.userMobile!=''">
+               #{userInfo.userMobile},
+           </if>
+           <if test="userInfo.userCode!=null and userInfo.userCode!=''">
+               #{userInfo.userCode},
+           </if>
+           <if test="userInfo.remark!=null and userInfo.remark!=''">
+               #{userInfo.remark},
+           </if>
+           <if test="userInfo.userUuid!=null and userInfo.userUuid!=''">
+               #{userInfo.userUuid},
+           </if>
+       </trim>
+   </insert>
+    <insert id="addCampus2User" parameterType="java.lang.Integer" useGeneratedKeys="true" keyColumn="id">
+        insert into ad_campus2user(campus_id,user_id)
+        values(1,#{userId})
+    </insert>
+    <select id="findUserInfo" parameterType="java.lang.String" resultType="java.util.Map">
+        select <include refid="Base_Column_List"/>,u.user_pwd as userPwd from user u
+        left join user_user2role u2r on u2r.user_id=u.user_id
+        left join user_role r on r.role_id=u2r.role_id
+        <where>
+            u.user_status <![CDATA[<>]]> 4
+            <choose>
+                <when test="name!=null and name!=''">
+                    and (u.user_name=#{name} or u.user_num=#{name})
+                </when>
+            </choose>
+        </where>
+    </select>
+    <update id="synUserData">
+        update user
+        <set>
+            <if test="userRealName!=null and userRealName!=''">
+                user_realname=#{userRealName},
+            </if>
+            user_source=0,
+        </set>
+        where user_id=#{userId}
+    </update>
+    <select id="findUserById" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select <include refid="Base_Column_List"/>,u.user_pwd as userPwd
+        from user u
+        left join user_user2role u2r on u2r.user_id=u.user_id
+        left join user_role r on r.role_id=u2r.role_id
+        where u.user_id=#{userId}
+    </select>
+    <select id="searchUserByName" parameterType="java.lang.String" resultType="java.util.Map">
+        select <include refid="Base_Column_List"/> from user u
+        left join user_user2role u2r on u2r.user_id=u.user_id
+        left join user_role r on r.role_id=u2r.role_id
+        where (u.user_name=#{userName} or u.user_mobile=#{userName}) and u.user_status <![CDATA[<>]]> 4
+    </select>
+    <update id="updateUser" parameterType="java.util.Map">
+        update user
+        <set>
+            <if test="userInfo.userType!=null and userInfo.userType!=''">
+                user_type=#{userInfo.userType},
+            </if>
+            <if test="userInfo.userName!=null and userInfo.userName!=''">
+                user_name=#{userInfo.userName},
+            </if>
+            <if test="userInfo.userRealName!=null and userInfo.userRealName!=''">
+                user_realname=#{userInfo.userRealName},
+            </if>
+            <if test="userInfo.userMobile!=null and userInfo.userMobile!=''">
+                user_mobile=#{userInfo.userMobile},
+            </if>
+            <if test="userInfo.userRemark!=null and userInfo.userRemark!=''">
+                user_remark=#{userInfo.userRemark},
+            </if>
+        </set>
+        where user_id=#{userInfo.userId} and user_status <![CDATA[<>]]> 4
+    </update>
+    <delete id="deleteUsers">
+        delete from user where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and user_id <![CDATA[<>]]> 1
+    </delete>
+    <delete id="deleteUser2Role">
+        delete from user_user2role where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and user_id <![CDATA[<>]]> 1
+    </delete>
+    <update id="updateUserPassword">
+        update user
+        <set>
+            <if test="newPwd!=null and newPwd!=''">
+                user_pwd=#{newPwd},
+            </if>
+            <if test="salt!=null and salt!=''">
+                user_salt=#{salt},
+            </if>
+        </set>
+        where user_id=#{userId}
+    </update>
+    <update id="updateLoginCount" parameterType="java.lang.Integer">
+        update user set user_login_count = 1 where user_id =#{userId}
+    </update>
+    <select id="searchUserCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(user_id) from user u
+        <where>
+            and u.user_status <![CDATA[<>]]> 4
+            <if test="searchKey!=null and searchKey!=''">
+                and (u.user_name like concat('%',#{searchKey},'%') or u.user_realname like concat('%',#{searchKey},'%')
+                or u.user_mobile like concat('%',#{searchKey},'%'))
+            </if>
+            <choose>
+                <when test="userId!=null">
+                    <if test="userId=='1'.toString()">
+                        and u.user_id <![CDATA[<>]]> 1
+                    </if>
+                    <if test="userId=='2'.toString()">
+                        and u.user_id <![CDATA[<>]]> 1 and u.user_id <![CDATA[<>]]> 2
+                    </if>
+                    <if test="userId!='1'.toString() and userId!='2'.toString()">
+                        and u.user_id <![CDATA[<>]]> 1
+                    </if>
+                </when>
+            </choose>
+        </where>
+    </select>
+    <select id="userPageList" resultType="java.util.Map">
+        select <include refid="Base_Column_List2"/> from user u
+        left join user_user2role u2r on u2r.user_id=u.user_id
+        left join user_role r on r.role_id=u2r.role_id
+        <where>
+            and u.user_status <![CDATA[<>]]> 4
+            <if test="searchKey!=null and searchKey!=''">
+                and (u.user_name like concat('%',#{searchKey},'%') or u.user_realname like concat('%',#{searchKey},'%')
+                or u.user_mobile like concat('%',#{searchKey},'%'))
+            </if>
+            <choose>
+                <when test="userId!=null and userId!=''">
+                    <if test="userId=='1'.toString()">
+                        and u.user_id <![CDATA[<>]]> 1
+                    </if>
+                    <if test="userId=='2'.toString()">
+                        and u.user_id <![CDATA[<>]]> 1 and u.user_id <![CDATA[<>]]> 2
+                    </if>
+                    <if test="userId!='1'.toString() and userId!='2'.toString()">
+                        <choose>
+                            <when test="flag">
+                                and u.user_id <![CDATA[<>]]> 1
+                            </when>
+                            <otherwise>
+                                and u.user_id <![CDATA[<>]]> 1 and u.user_id <![CDATA[<>]]> 2
+                            </otherwise>
+                        </choose>
+                    </if>
+                </when>
+            </choose>
+        </where>
+        group by u.user_id
+        order by u.user_id desc
+        <if test="flag">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+    <update id="resetPwd" parameterType="java.lang.String">
+        update user
+        <set>
+            <if test="userPwd!=null and userPwd!=''">
+                user_pwd=#{userPwd},
+            </if>
+            <if test="salt!=null and salt!=''">
+                user_salt=#{salt},
+            </if>
+        </set>
+        where user_id=#{userId}
+    </update>
+</mapper>

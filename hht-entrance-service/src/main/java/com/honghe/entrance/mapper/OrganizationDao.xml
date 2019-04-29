@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.OrganizationDao">
+  <insert id="addCampus" parameterType="java.lang.String">
+      insert into ad_campus(id,name,p_id,number,type_id,url)
+       values('1',#{orgName},0,0,1,':')
+  </insert>
+  <insert id="addGroup">
+      insert into dm_patrol_group(dm_patrol_group_id,uuid,name,parent_id,province_id,city_id,county_id,parent_path,
+      code,level,type,remark)
+      values('1', 'b8c5ea6738ea4183a39b8a43c4fe52c0',#{orgName},'0', NULL, NULL, NULL, '/0/','AR00000', '4', '1', '')
+  </insert>
+  <delete id="delCampus">
+      delete from ad_campus
+  </delete>
+  <delete id="delGroup">
+      delete from dm_patrol_group
+  </delete>
+   <select id="searchSchool" resultType="java.util.Map">
+       select id,name,type_id as typeId from ad_campus where type_id=4
+   </select>
+    <select id="searchCampusNum" resultType="java.lang.Integer">
+        select count(1) as count from ad_campus where p_id='0'
+    </select>
+    <delete id="deleteCampus2Users">
+        delete from ad_campus2user where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

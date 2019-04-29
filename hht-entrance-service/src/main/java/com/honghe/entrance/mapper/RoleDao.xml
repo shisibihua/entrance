@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.RoleDao">
+    <sql id="Base_Column_List">
+        role_id as roleId,role_name as roleName
+    </sql>
+
+    <select id="getRoleInfoByUserId" parameterType="java.lang.String" resultType="java.util.Map">
+        select r.role_id as roleId,r.role_name as roleName
+        from user_role r
+        left join user_user2role u on r.role_id=u.role_id
+        <where>
+            u.user_id =#{userId}
+        </where>
+    </select>
+    <select id="findAllRole"  resultType="java.util.Map">
+        select <include refid="Base_Column_List" />  from user_role where role_id <![CDATA[<>]]> 2 order by role_id
+    </select>
+    <select id="isRoleExist" parameterType="java.util.Map" resultType="java.lang.Boolean">
+        select count(*) from user_role
+        <where>
+            <choose>
+                <when test="data.roleName != null and data.roleName !=''">
+                    role_name = #{data.roleName}
+                    <if test="data.roleId != null and data.roleId !=''">
+                        and role_id <![CDATA[<>]]> #{data.roleId}
+                    </if>
+                </when>
+                <otherwise>
+                    1=0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <insert id="addRole" parameterType="java.lang.String" useGeneratedKeys="true" keyColumn="role_id">
+        <if test="roleId != null and roleId !=''">
+            insert into user_role(role_id,role_name,role_init) values(#{roleId},null,'1')
+        </if>
+    </insert>
+    <select id="user2RoleById" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(id) as ids from user_user2role where role_id in (#roleId)
+    </select>
+    <delete id="delete" parameterType="java.lang.String">
+        delete from user_role where role_id in (#roleId)
+    </delete>
+    <update id="updateRoleByRoleId" parameterType="java.util.Map">
+        update user_role
+        <set>
+            <if test="data.roleName != null and data.roleName != ''">
+                role_name = #{data.roleName}
+            </if>
+        </set>
+        <if test="data.roleId != null and data.roleId != ''">
+            where role_id = #{data.roleId}
+        </if>
+    </update>
+    <delete id="deleteRoles">
+        delete from user_role where role_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <delete id="deleteRole2Modules">
+        delete from user_role2sysmodule where role_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

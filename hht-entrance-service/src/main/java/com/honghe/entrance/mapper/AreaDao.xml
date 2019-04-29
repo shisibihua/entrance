@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.AreaDao">
+    <resultMap id="BaseResultMap" type="com.honghe.entrance.entity.DMArea">
+        <id column="dm_area_id" jdbcType="INTEGER" property="areaId" />
+        <result column="uuid" jdbcType="VARCHAR" property="areaUuid" />
+        <result column="name" jdbcType="VARCHAR" property="areaName" />
+        <result column="parent_id" jdbcType="VARCHAR" property="areaParentId" />
+        <result column="province_id" jdbcType="INTEGER" property="provinceId" />
+        <result column="city_id" jdbcType="INTEGER" property="cityId" />
+        <result column="county_id" jdbcType="INTEGER" property="countyId" />
+        <result column="parent_path" jdbcType="VARCHAR" property="areaParentPath" />
+        <result column="code" jdbcType="VARCHAR" property="areaCode" />
+        <result column="level" jdbcType="INTEGER" property="areaLevel" />
+        <result column="type" jdbcType="INTEGER" property="areaType" />
+        <result column="remark" jdbcType="VARCHAR" property="areaRemark" />
+        <result column="dm_schedule_id" jdbcType="VARCHAR" property="scheduleId" />
+   </resultMap>
+  <sql id="Base_Column_List">
+      dm_area_id as areaId,uuid as areaUuid,name as areaName,parent_id as areaParentId,province_id as provinceId,city_id as cityId,
+      county_id as countyId,parent_path as areaParentPath,code as areaCode,level as areaLevel,type as areaType,
+      remark as areaRemark,dm_schedule_id as scheduleId
+  </sql>
+
+  <insert id="addAreas" useGeneratedKeys="true" keyProperty="areaId" >
+      insert into dm_area(dm_area_id,uuid,name,parent_id,parent_path,code,level,type,remark,dm_schedule_id)
+      values
+      <foreach collection="list" item="item" separator=",">
+          (#{item.areaId},#{item.areaUuid},#{item.areaName},#{item.areaParentId},#{item.areaParentPath},#{item.areaCode},
+          #{item.areaLevel},#{item.areaType},#{item.areaRemark},#{item.scheduleId})
+      </foreach>
+  </insert>
+   <insert id="addUser2Area">
+       insert into dm_user_r_area(dm_user_uuid,dm_area_uuid,dm_user_id,dm_area_id,id)
+       values('17abfceade3b4fab91bad0535bde2ed3', 'dfd472bfb0494087bc4a2cc71e3bfa90', '1', '1', '1')
+   </insert>
+  <select id="getAreaByName" parameterType="java.lang.String" resultType="java.util.Map">
+      select <include refid="Base_Column_List"/> from dm_area where name=#{areaName}
+  </select>
+  <select id="getAllAreas" resultType="java.util.Map">
+      select <include refid="Base_Column_List"/> from dm_area where level>=4
+  </select>
+  <select id="getAllAreaByParentId"  resultType="java.util.Map">
+      select <include refid="Base_Column_List"/> from dm_area where parent_id=#{parentId}
+  </select>
+  <select id="exitsRootUserRArea" resultType="java.lang.Integer">
+      select count(id) as count from dm_user_r_area where id=1
+  </select>
+  <select id="getSchoolInfo" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List"/> from dm_area where parent_id='0'
+  </select>
+   <select id="getMaxAreaId" resultType="java.lang.String">
+       select max(dm_area_id) as areaId from dm_area
+   </select>
+    <select id="getMaxAreaCode" resultType="java.lang.String">
+       select max(code) as code from dm_area
+   </select>
+  <select id="getAreaById" resultType="java.util.Map">
+      select <include refid="Base_Column_List"/> from dm_area where dm_area_id=#{areaId}
+  </select>
+    <select id="getAllAreaIds" resultType="java.util.Map">
+        select dm_area_id as areaId from dm_area where dm_area_id>1
+    </select>
+    <insert id="addArea" parameterType="java.lang.String">
+        insert into dm_area(dm_area_id, uuid, name, parent_id, province_id, city_id, county_id,
+        parent_path, code, level, type, remark, dm_schedule_id)
+        values(1,'dfd472bfb0494087bc4a2cc71e3bfa90',#{orgName},'0', NULL, NULL, NULL, '/0/', 'AR00000',
+        '4', '1', #{code},NULL)
+    </insert>
+    <insert id="addUser2AreaAdmin">
+        insert into dm_user_r_area(`dm_user_uuid`, `dm_area_uuid`, `dm_user_id`, `dm_area_id`, `id`)
+        values('9699b32366584bb09c43bdd96341747d', 'dfd472bfb0494087bc4a2cc71e3bfa90', '2', '1', '2')
+    </insert>
+    <delete id="delArea">
+        delete from dm_area
+    </delete>
+    <delete id="delUser2Area">
+        delete from dm_user_r_area
+    </delete>
+</mapper>

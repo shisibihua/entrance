@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.User2RoleDao">
+
+    <delete id="deleteByUserId" parameterType="java.lang.String">
+        <if test="userId != null and userId != ''">
+            delete from user_user2role where user_id in(#{userId})
+        </if>
+    </delete>
+    <insert id="add" useGeneratedKeys="true" keyColumn="id">
+        <if test="values != null and values != ''">
+            insert into user_user2role (user_id,role_id) values #{values}
+        </if>
+    </insert>
+    <insert id="addUser2Role" parameterType="java.lang.String">
+       insert into user_user2role (user_id,role_id) values(#{userId},#{roleId})
+    </insert>
+</mapper>

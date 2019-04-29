@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.ModuleSysDao">
+    <sql id = "Base_Column_List">
+        user_sys_module_id as id,user_sys_module_name as name, user_sys_module_path url,user_sys_module_color bg,
+        user_sys_module_keyvalues as appParams, user_sys_module_icon as icon, user_sys_module_token as token,
+        en_name as en_name, version as version, status as status
+    </sql>
+
+    <select id="getCurrentTheme" resultType="java.util.Map">
+        select themeTitle, themeLogo, themeBackGround from entrance_theme where id=1
+    </select>
+    <select id="selectModuleIds" resultType="java.lang.String">
+        select distinct user_sys_module_id as moduleId from user_sys_position where user_sys_module_id not in(2,5)
+    </select>
+    <select id="getAllModules" resultType="java.util.Map">
+      SELECT * FROM user_sys_module
+      <where>
+          <!--<if test="list != null and list.size()>0">
+              and user_sys_module_id  in
+              <foreach collection="list" item="item" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>-->
+          user_sys_module_id not in(2,5) and status=1 order by user_sys_module_id asc
+      </where>
+    </select>
+    <select id="getExtraInfo" resultType="java.util.Map">
+        select group_concat(intra_net_ip) as intraNetIp,group_concat(extra_net_ip) as extraNetIp from server_net_mapping limit 1
+    </select>
+    <select id="getModuleByName" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM user_sys_module
+        <where>
+            <choose>
+                <when test="name != null and name != ''">
+                    and user_sys_module_name =#{name}
+                </when>
+            </choose>
+            and user_sys_module_id <![CDATA[<>]]> 1
+        </where>
+    </select>
+
+  <update id="updateThemeUrl" parameterType="java.lang.String">
+     update entrance_theme
+     <set>
+         <if test="logo!=null">
+             themeLogo=#{logo},
+         </if>
+         <if test="backGround!=null">
+             themeBackGround=#{backGround},
+         </if>
+     </set>
+  </update>
+    <delete id="deleteSysModules">
+        <if test="list != null and list.size()>0 ">
+            delete from user_sys_module where user_sys_module_id in
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+    <insert id="addSysModules" parameterType="com.honghe.entrance.entity.Module" useGeneratedKeys="true" keyProperty="paramMap.moduleId">
+        insert into user_sys_module
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="paramMap.name!=null and paramMap.name!=''">
+                user_sys_module_name,
+            </if>
+            <if test="paramMap.url!=null and paramMap.url!=''">
+                user_sys_module_path,
+            </if>
+            <if test="paramMap.bgColor!=null and paramMap.bgColor!=''">
+                user_sys_module_color,
+            </if>
+            <if test="paramMap.keyValueString!=null and paramMap.keyValueString!=''">
+                user_sys_module_keyvalues,
+            </if>
+            <if test="paramMap.icon!=null and paramMap.icon!=''">
+                user_sys_module_icon,
+            </if>
+            <if test="paramMap.token!=null and paramMap.token!=''">
+                user_sys_module_token,
+            </if>
+            <if test="paramMap.enName!=null and paramMap.enName!=''">
+                en_name,
+            </if>
+            <if test="paramMap.version!=null and paramMap.version!=''">
+                version,
+            </if>
+            <if test="paramMap.remark!=null and paramMap.remark!=''">
+                remark,
+            </if>
+            <if test="paramMap.status!=null and paramMap.status!=''">
+                status,
+            </if>
+            <if test="paramMap.browser!=null and paramMap.browser!=''">
+                browser,
+            </if>
+            <if test="paramMap.browserRoute!=null and paramMap.browserRoute!=''">
+                browserRoute,
+            </if>
+            <if test="paramMap.nameFlag!=null and paramMap.nameFlag!=''">
+                nameFlag,
+            </if>
+        </trim>
+        <trim prefix="values(" suffixOverrides="," suffix=")">
+            <if test="paramMap.name!=null and paramMap.name!=''">
+                #{paramMap.name},
+            </if>
+            <if test="paramMap.url!=null and paramMap.url!=''">
+                #{paramMap.url},
+            </if>
+            <if test="paramMap.bgColor!=null and paramMap.bgColor!=''">
+                #{paramMap.bgColor},
+            </if>
+            <if test="paramMap.keyValueString!=null and paramMap.keyValueString!=''">
+                #{paramMap.keyValueString},
+            </if>
+            <if test="paramMap.icon!=null and paramMap.icon!=''">
+                #{paramMap.icon},
+            </if>
+            <if test="paramMap.token!=null and paramMap.token!=''">
+                #{paramMap.token},
+            </if>
+            <if test="paramMap.enName!=null and paramMap.enName!=''">
+                #{paramMap.enName},
+            </if>
+            <if test="paramMap.version!=null and paramMap.version!=''">
+                #{paramMap.version},
+            </if>
+            <if test="paramMap.remark!=null and paramMap.remark!=''">
+                #{paramMap.remark},
+            </if>
+            <if test="paramMap.status!=null and paramMap.status!=''">
+                #{paramMap.status},
+            </if>
+            <if test="paramMap.browser!=null and paramMap.browser!=''">
+                #{paramMap.browser},
+            </if>
+            <if test="paramMap.browserRoute!=null and paramMap.browserRoute!=''">
+                #{paramMap.browserRoute},
+            </if>
+            <if test="paramMap.nameFlag!=null and paramMap.nameFlag!=''">
+                #{paramMap.nameFlag},
+            </if>
+        </trim>
+    </insert>
+    <select id="selectDefaultModuleIds" resultType="java.lang.String">
+        select distinct user_sys_module_id as moduleId from user_sys_module where user_sys_module_id not in(2,4,5,6)
+    </select>
+    <select id="getMaxModuleId" resultType="java.lang.Integer">
+        select max(user_sys_module_id) as moduleId from user_sys_module where status=1
+    </select>
+    <update id="updateModuleStatus">
+        update user_sys_module
+        <set>
+            <if test="status!=null and status!=''">
+                status=#{status}
+            </if>
+        </set>
+        <where>
+            and user_sys_module_id=#{moduleId}
+        </where>
+    </update>
+    <select id="repeatName" resultType="java.lang.Integer">
+        select count(user_sys_module_id) from user_sys_module
+        <where>
+            and user_sys_module_name=#{name}
+            and user_sys_module_id <![CDATA[<>]]> #{moduleId}
+        </where>
+    </select>
+    <update id="updateSysModules" parameterType="java.util.Map">
+        update user_sys_module
+        <set>
+            <if test="params.name!=null and params.name!=''">
+                user_sys_module_name=#{params.name},
+            </if>
+            <if test="params.url!=null and params.url!=''">
+                user_sys_module_path=#{params.url},
+            </if>
+            <if test="params.bgColor!=null and params.bgColor!=''">
+                user_sys_module_color=#{params.bgColor},
+            </if>
+            <if test="params.keyValueString!=null and params.keyValueString!=''">
+                user_sys_module_keyvalues=#{params.keyValueString},
+            </if>
+            <if test="params.icon!=null and params.icon!=''">
+                user_sys_module_icon=#{params.icon},
+            </if>
+            <if test="params.token!=null and params.token!=''">
+                user_sys_module_token=#{params.token},
+            </if>
+            <if test="params.enName!=null and params.enName!=''">
+                en_name=#{params.enName},
+            </if>
+            <if test="params.version!=null and params.version!=''">
+                version=#{params.version},
+            </if>
+            <if test="params.remark!=null and params.remark!=''">
+                remark=#{params.remark},
+            </if>
+            <if test="params.browser!=null and params.browser!=''">
+                browser=#{params.browser},
+            </if>
+            <if test="params.browserRoute!=null and params.browserRoute!=''">
+                browserRoute=#{params.browserRoute},
+            </if>
+            <if test="params.status!=null and params.status!=''">
+                status=#{params.status},
+            </if>
+            <if test="params.nameFlag!=null and params.nameFlag!=''">
+                nameFlag=#{params.nameFlag},
+            </if>
+        </set>
+        <where>
+            user_sys_module_id=#{params.moduleId}
+        </where>
+    </update>
+    <update id="resetTheme">
+        update entrance_theme set themeLogo=null,themeBackGround=null,themeTitle=null
+    </update>
+    <update id="themeSet" parameterType="java.util.Map">
+        update entrance_theme
+        <set>
+            user_id=#{params.userId},
+            <if test="params.themeTitle!=null and params.themeTitle!=''">
+                themeTitle=#{params.themeTitle},
+            </if>
+            <if test="params.themeEnTitle!=null and params.themeEnTitle!=''">
+                themeEnTitle=#{params.themeEnTitle},
+            </if>
+            <if test="params.themeLogo!=null and params.themeLogo!=''">
+                themeLogo=#{params.themeLogo},
+            </if>
+            <if test="params.themeLoginBackGround!=null and params.themeLoginBackGround!=''">
+                themeLoginBackGround=#{params.themeLoginBackGround},
+            </if>
+            <if test="params.themeBackGround!=null and params.themeBackGround!=''">
+                themeBackGround=#{params.themeBackGround},
+            </if>
+            <if test="params.modifyTime!=null and params.modifyTime!=''">
+                modifyTime=#{params.modifyTime},
+            </if>
+            type=#{params.type},
+            isdelete=#{params.isDelete},
+        </set>
+        where id=1
+    </update>
+</mapper>

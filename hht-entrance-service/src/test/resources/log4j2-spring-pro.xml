@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+        <!--开发环境文件-->
+        <Loggers>
+                <logger name="org.springframework" level="ERROR"/>
+
+                <!--additivity 是否在父级中打印-->
+                <logger name="com.honghe" level="ERROR" additivity="false">
+                        <AppenderRef ref="EntranceInfo" />
+                        <AppenderRef ref="EntranceDebug" />
+                        <AppenderRef ref="EntranceError" />
+                </logger>
+                <logger name="com.honghe.entrance.dao" level="DEBUG" additivity="false">
+                        <AppenderRef ref="sql" />
+                </logger>
+
+
+                <Root level="ERROR">
+                        <AppenderRef ref="Console" />
+                </Root>
+        </Loggers>
+
+        <Appenders>
+                <Console name="Console" target="SYSTEM_OUT" follow="true">
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                </Console>
+
+                <RollingFile name="EntranceDebug" fileName="Entrance-log/EntranceDebug.log" filePattern="Entrance-log/logs/EntranceDebug-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL"/>
+                                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>                           </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                                <SizeBasedTriggeringPolicy size="20 MB" />
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10"/>
+                        <DefaultRolloverStrategy max="10">
+                                <Delete basePath="Entrance-log/logs" maxDepth="1">
+                                        <IfFileName glob="EntranceDebug-*.log.gz" />
+                                        <IfLastModified age="30d" />
+                                </Delete>
+                        </DefaultRolloverStrategy>
+                </RollingFile>
+
+                <RollingFile name="EntranceError" fileName="Entrance-log/EntranceError.log" filePattern="Entrance-log/logs/EntranceError-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>                             </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                                <SizeBasedTriggeringPolicy size="20 MB" />
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10"/>
+                        <DefaultRolloverStrategy max="10">
+                                <Delete basePath="Entrance-log/logs" maxDepth="1">
+                                        <IfFileName glob="EntranceError-*.log.gz" />
+                                        <IfLastModified age="30d" />
+                                </Delete>
+                        </DefaultRolloverStrategy>
+                </RollingFile>
+
+
+                <RollingFile name="EntranceInfo" fileName="Entrance-log/EntranceInfo.log" filePattern="Entrance-log/logs/EntranceInfo-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>                        </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                                <SizeBasedTriggeringPolicy size="20 MB" />
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10"/>
+                        <DefaultRolloverStrategy max="10">
+                                <Delete basePath="Entrance-log/logs" maxDepth="1">
+                                        <IfFileName glob="EntranceInfo-*.log.gz" />
+                                        <IfLastModified age="30d" />
+                                </Delete>
+                        </DefaultRolloverStrategy>
+                </RollingFile>
+
+
+
+                <RollingFile name="sql" fileName="sql-log/Entrance-sql.log" filePattern="sql-log/logs/Entrance-%d{yyyy-MM-dd}-%i.log.gz">
+                        <Filters>
+                                <ThresholdFilter level="DEBUG"/>
+                        </Filters>
+                        <PatternLayout>
+                                <Pattern>[%l] [%t] [%-4r] [%d{yyyy-MM-dd HH:mm:ss,SSS}] [%p] \: %m%n</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                                <!-- 启动创建新的日志文件 <OnStartupTriggeringPolicy />-->
+                                <SizeBasedTriggeringPolicy size="100 MB" />
+                                <!-- 记录日志的时间间隔<TimeBasedTriggeringPolicy />-->
+                        </Policies>
+                        <DirectWriteRolloverStrategy maxFiles="10000"/>
+                        <DefaultRolloverStrategy max="10">
+                                <Delete basePath="sql-log/logs" maxDepth="1">
+                                        <IfFileName glob="Entrance-*.log.gz" />
+                                        <IfLastModified age="30d" />
+                                </Delete>
+                        </DefaultRolloverStrategy>
+                </RollingFile>
+        </Appenders>
+</Configuration>

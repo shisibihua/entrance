@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.Role2PermissionDao">
+  <sql id="Base_Column_List">
+      role_id as roleId, user_sys_module_id as permissionId
+  </sql>
+    <insert id="add" parameterType="java.util.Map">
+      <if test="data.roleId!= null and data.roleId != '' and data.permissionId != null and data.permissionId != ''">
+          insert into user_role2sysmodule (role_id,user_sys_module_id)
+          VALUES (#{data.roleId},#{data.permissionId})
+      </if>
+    </insert>
+    <!--<insert id="addRole2SysModules" parameterType="java.lang.String">
+        <if test="moduleValues!= null and moduleValues != ''">
+            insert into user_role2sysmodule (role_id,user_sys_module_id) VALUES #{moduleValues}
+        </if>
+    </insert>-->
+    <delete id="delete" parameterType="java.lang.String">
+        <if test="roleId != null and roleId != ''">
+            delete from user_role2sysmodule where role_id =#{roleId}
+        </if>
+    </delete>
+    <delete id="deleteBySysModuleId">
+        <if test="list != null and list.size()>0">
+            DELETE FROM user_role2sysmodule WHERE user_sys_module_id in
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+    <select id="role2SysModuleSearch" parameterType="java.lang.String" resultType="java.util.Map">
+        select <include refid="Base_Column_List" /> from user_role2sysmodule
+        <where>
+            <if test="roleId != null and roleId != ''">
+                role_id =#{roleId}
+            </if>
+        </where>
+    </select>
+    <select id="countRole2SysModule" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*) as count from user_role2sysmodule
+        <where>
+            <if test="roleId != null and roleId != ''">
+                role_id = #{roleId}
+            </if>
+        </where>
+    </select>
+    <select id="searchRole2SysModuleNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) as count from user_role2sysmodule where role_id=#{roleId}
+    </select>
+    <insert id="batchAdd">
+        insert into user_role2sysmodule(role_id,user_sys_module_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId},#{item.moduleId})
+        </foreach>
+    </insert>
+</mapper>

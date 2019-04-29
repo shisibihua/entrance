@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honghe.entrance.dao.UserSysPositionDao">
+    <sql id="Base_Column_List">
+        user_sys_position_id as id, user_id as userId, user_sys_module_id as moduleId,x as x, y as y, w as w, h as h,
+         min_w as minW, min_h as minH, is_delete as isDelete, is_draggable as isDraggable,is_resizable as isResizable
+    </sql>
+    <select id="getUser2ModuleByName" resultType="java.util.Map">
+        select <include refid="Base_Column_List" /> from user_sys_position
+        <where>
+            <if test="userId != null">
+               and  user_id =#{userId}
+            </if>
+            <if test="userSysModuleId != null">
+                and user_sys_module_id=#{userSysModuleId}
+            </if>
+        </where>
+    </select>
+    <select id="getDefaultPosition" resultType="java.util.Map">
+        select <include refid="Base_Column_List" /> from user_sys_position
+        where user_id =0 or (user_id =1 and user_sys_module_id>=12 and user_sys_module_id!=13)
+    </select>
+    <update id="enableModuleAuthority">
+        update user_sys_position set is_delete=0 where user_id=#{roleId}
+    </update>
+    <update id="disableModuleAuthority">
+        update user_sys_position set is_delete=1
+        <where>
+            <if test="roleId != null and roleId != ''">
+                user_id = #{roleId}
+            </if>
+            <if test="authorityIds!=null and authorityIds.length>0">
+                and user_sys_module_id not in
+                <foreach collection="authorityIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+    <delete id="deleteSysModules">
+        <if test="list != null and list.size()>0" >
+            delete from user_sys_position where user_sys_module_id in
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+    <delete id="deleteSysModulesByUserId" parameterType="java.lang.String">
+        <if test="userId != null and userId != ''" >
+            delete from user_sys_position where  user_id =#{userId}
+        </if>
+    </delete>
+    <insert id="addUser2Position">
+        INSERT INTO user_sys_position (user_id, user_sys_module_id, x,y, w, h,
+        min_w, min_h, is_delete, is_draggable, is_resizable)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.userId},#{item.moduleId},#{item.x},#{item.y},#{item.w},#{item.h},#{item.minW},#{item.minH},
+            #{item.isDelete},#{item.isDraggable},#{item.isResizable})
+        </foreach>
+    </insert>
+    <delete id="deletePositions">
+        delete from user_sys_position where user_id in
+        <foreach collection="userIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <select id="sysGetAllEnableModule" parameterType="java.lang.String" resultType="java.util.Map">
+        select  distinct module.*, position.* FROM user_sys_module module
+        left join user_sys_position position on module.user_sys_module_id=position.user_sys_module_id
+        left join user_role2sysmodule r2m on r2m.role_id=position.user_id
+        <where>
+            and position.user_id=#{userId}
+            <if test="searchKey!=null and searchKey!=''">
+                and module.user_sys_module_name like concat('%',#{searchKey},'%')
+            </if>
+            <if test="status!=null and status!=''">
+                and module.status=#{status}
+            </if>
+        </where>
+    </select>
+    <update id="updateUser2PerModules" parameterType="java.util.Map">
+        update user_sys_position
+        <set>
+            <if test="params.x!=null and params.x!=''">
+                x=#{params.x},
+            </if>
+            <if test="params.y!=null and params.y!=''">
+                y=#{params.y},
+            </if>
+            <if test="params.isDelete!=null and params.isDelete!=''">
+                is_delete=#{params.isDelete},
+            </if>
+        </set>
+        <where>
+            and user_id=#{params.userId} and user_sys_module_id=#{params.moduleId}
+        </where>
+    </update>
+</mapper>
